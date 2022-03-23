@@ -1,0 +1,9 @@
+{
+  "extends": "@lbwa/tsconfig",
+  "compileOnSave": true,
+  "compilerOptions": {
+    "incremental": true,
+    "baseUrl": "./"
+  },
+  "exclude": ["dist"]
+}
