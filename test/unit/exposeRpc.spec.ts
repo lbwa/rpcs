@@ -1,7 +1,11 @@
 import EventEmitter from 'events'
 import { Worker as WorkerThread } from 'worker_threads'
 import { exposeRpc } from '@/index'
-import { ExceptionResponse, NormalResponse, RpcMessageType } from '@/protocol'
+import {
+  RpcExceptionResponse,
+  RpcNormalResponse,
+  RpcMessageType
+} from '@/protocol'
 
 describe('exposeRpc(value, endpoint)', () => {
   it('should expose worker scope to provide functionalities', async () => {
@@ -22,11 +26,11 @@ describe('exposeRpc(value, endpoint)', () => {
       })
       expect(postMessage).toBeCalledTimes(1)
       const [response] = (postMessage.mock.calls[0] ?? []) as [
-        ExceptionResponse
+        RpcExceptionResponse
       ]
       expect(response.id).toEqual(12)
       expect(
-        (response as unknown as NormalResponse<unknown>).result
+        (response as unknown as RpcNormalResponse<unknown>).result
       ).toBeUndefined()
       expect(response.error).toMatchSnapshot('expect unknown message type')
       postMessage.mockReset()
@@ -40,7 +44,7 @@ describe('exposeRpc(value, endpoint)', () => {
       })
       expect(postMessage).toBeCalledTimes(1)
       const [response] = (postMessage.mock.calls[0] ?? []) as [
-        NormalResponse<string>
+        RpcNormalResponse<string>
       ]
       expect(response.id).toEqual(123)
       expect(response.result).toEqual(data.person.name)

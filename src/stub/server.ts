@@ -2,9 +2,9 @@ import get from 'lodash/get'
 import isNil from 'lodash/isNil'
 import {
   Endpoint,
-  ExceptionResponse,
+  RpcExceptionResponse,
   MessageId,
-  NormalResponse,
+  RpcNormalResponse,
   RpcMessage,
   RpcMessageType
 } from '../protocol'
@@ -13,14 +13,14 @@ import { registerMessageListener } from './method'
 export function createRcpNormalResult<Result>(
   id: MessageId,
   result: Result
-): NormalResponse<Result> {
+): RpcNormalResponse<Result> {
   return { id, result }
 }
 
 export function createRcpExceptionResponse<Exception>(
   id: MessageId,
   exception: Exception
-): ExceptionResponse<Exception> {
+): RpcExceptionResponse<Exception> {
   return { id, error: exception }
 }
 

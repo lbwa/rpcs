@@ -18,23 +18,23 @@ export interface RpcGetMessage {
 
 export type RpcMessage = RpcGetMessage
 
-export interface NormalResponse<Result> {
+export interface RpcNormalResponse<Result> {
   id: MessageId
   result: Result
 }
 
-export interface ExceptionResponse<Exception = unknown> {
+export interface RpcExceptionResponse<Exception = unknown> {
   id: MessageId
   error: Exception
 }
 
 export type RpcResponse<Result = unknown, Exception = unknown> =
-  | NormalResponse<Result>
-  | ExceptionResponse<Exception>
+  | RpcNormalResponse<Result>
+  | RpcExceptionResponse<Exception>
 
 export function isRpcNormalResponse<Result>(
   data: unknown
-): data is NormalResponse<Result> {
+): data is RpcNormalResponse<Result> {
   return ['id', 'result'].every(
     key => !isNil((data as Record<string, unknown>)[key as keyof typeof data])
   )
@@ -42,7 +42,7 @@ export function isRpcNormalResponse<Result>(
 
 export function isRpcExceptionResponse<Exception>(
   data: unknown
-): data is ExceptionResponse<Exception> {
+): data is RpcExceptionResponse<Exception> {
   return ['id', 'error'].every(
     key => !isNil((data as Record<string, unknown>)[key as keyof typeof data])
   )
