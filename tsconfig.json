@@ -3,7 +3,10 @@
   "compileOnSave": true,
   "compilerOptions": {
     "incremental": true,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "exclude": ["dist"]
+  "exclude": ["dist", "coverage"]
 }

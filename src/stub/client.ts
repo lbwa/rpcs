@@ -62,6 +62,6 @@ function createProxy<T>(endpoint: Endpoint, path: string[]): Remote<T> {
   return proxy
 }
 
-export function createRpc<T>(endpoint: Endpoint): Remote<T> {
+export function wrapRpc<T>(endpoint: Endpoint): Remote<T> {
   return createProxy<T>(endpoint, [])
 }
