@@ -5,7 +5,9 @@ import {
   RpcMessage,
   RpcMessageType,
   RpcResponse,
-  isRpcExceptionResponse
+  isRpcExceptionResponse,
+  RpcGetMessage,
+  RpcApplyMessage
 } from '../protocol'
 import { createUuid } from '../utils'
 import { Remote } from './stub'
@@ -13,9 +15,19 @@ import { registerMessageListener, unregisterMessageListener } from './method'
 
 function sendMessage<Response, Transferable extends ArrayBuffer>(
   endpoint: Endpoint,
+  msg: RpcGetMessage,
+  transfer?: Transferable[]
+): Promise<Response>
+function sendMessage<Response, Transferable extends ArrayBuffer>(
+  endpoint: Endpoint,
+  msg: RpcApplyMessage,
+  transfer?: Transferable[]
+): Promise<Response>
+function sendMessage<Response, Transferable extends ArrayBuffer>(
+  endpoint: Endpoint,
   msg: RpcMessage,
   transfer?: Transferable[]
-) {
+): Promise<Response> {
   return new Promise<Response>((resolve, reject) => {
     const id = createUuid()
 
@@ -59,6 +71,17 @@ function createProxy<T>(endpoint: Endpoint, path: string[]): Remote<T> {
         )
       }
       return createProxy(endpoint, [...path, prop])
+    },
+    apply(_target, _this, args) {
+      const last = path[path.length - 1]
+      if (last === 'bind') {
+        return createProxy(endpoint, path.slice(0, -1))
+      }
+      return sendMessage(endpoint, {
+        type: RpcMessageType.APPLY,
+        path,
+        args
+      })
     }
   }) as Remote<T>
   return proxy

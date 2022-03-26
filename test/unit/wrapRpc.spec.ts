@@ -3,7 +3,7 @@ import { isProxy } from 'util/types'
 import { Worker as WorkerThread } from 'worker_threads'
 import noop from 'lodash/noop'
 import { wrapRpc } from '@/index'
-import { RpcMessage, RpcResponse } from '@/protocol'
+import { RpcMessage, RpcMessageType, RpcResponse } from '@/protocol'
 
 describe('wrapRpc(workerThread)', () => {
   const onMessage = jest.fn()
@@ -26,7 +26,7 @@ describe('wrapRpc(workerThread)', () => {
     expect(isProxy(rpc)).toBeTruthy()
   })
 
-  it('should wrap worker to implement RPC client interface', async () => {
+  it('should get remote property value', async () => {
     let sendResponse = noop
     const onMessage = jest.fn(
       (_, onmessage: (res: RpcResponse<unknown>) => void) => {
@@ -61,9 +61,41 @@ describe('wrapRpc(workerThread)', () => {
     } as unknown as WorkerThread)
 
     await expect(
-      // @ts-expect-error ___
+      // @ts-expect-error illegal usage
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       (async () => await rpc[Symbol('name')])()
     ).rejects.toMatchSnapshot()
+  })
+
+  it('should call remote function', async () => {
+    const remoteCallReturn = 'remote getField("name") call'
+    let sendResponse = noop
+    const onMessage = jest.fn(
+      (_, onmessage: (res: RpcResponse<unknown>) => void) => {
+        sendResponse = onmessage
+      }
+    )
+    const offMessage = jest.fn(() => {
+      sendResponse = noop
+    })
+    const postMessage = jest.fn((message: RpcMessage) => {
+      // simulate remote response
+      const { id, type } = message
+      if (type === RpcMessageType.APPLY) {
+        const { args } = message
+        if (args.length === 1 && args[0] === 'name') {
+          sendResponse({ id, result: remoteCallReturn })
+          return
+        }
+      }
+      throw new Error('Exception')
+    })
+    const rpc = wrapRpc<{ getField(name: string): string }>({
+      addListener: onMessage,
+      removeListener: offMessage,
+      postMessage
+    } as unknown as WorkerThread)
+
+    expect(await rpc.getField('name')).toEqual(remoteCallReturn)
   })
 })

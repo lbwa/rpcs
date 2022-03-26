@@ -1,10 +1,8 @@
 import type { Worker as WorkerThread } from 'worker_threads'
 import get from 'lodash/get'
 import isFunction from 'lodash/isFunction'
+import { UniversalFunc } from './stub'
 import { Endpoint } from '@/protocol'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type EventListener = (...args: any[]) => unknown
 
 export function isWebWorkerInterface(endpoint: unknown): endpoint is Worker {
   return ['addEventListener', 'removeListener', 'postMessage'].every(m =>
@@ -20,7 +18,7 @@ export function isWorkerThreadInterface(
   )
 }
 
-export function registerMessageListener<OnMessage extends EventListener>(
+export function registerMessageListener<OnMessage extends UniversalFunc>(
   endpoint: Endpoint,
   onMessage: OnMessage
 ) {
@@ -32,7 +30,7 @@ export function registerMessageListener<OnMessage extends EventListener>(
   }
 }
 
-export function unregisterMessageListener<OnMessage extends EventListener>(
+export function unregisterMessageListener<OnMessage extends UniversalFunc>(
   endpoint: Endpoint,
   onMessage: OnMessage
 ) {

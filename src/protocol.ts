@@ -1,13 +1,16 @@
 import type { Worker as WorkerThread } from 'worker_threads'
-import type { PropertyPath } from 'lodash'
+import type { PropertyName } from 'lodash'
 import isNil from 'lodash/isNil'
 
 export type Endpoint = Worker /* web worker */ | WorkerThread
 
 export type MessageId = string
 
+export type PropertyPath = ReadonlyArray<Exclude<PropertyName, symbol>>
+
 export enum RpcMessageType {
-  GET
+  GET,
+  APPLY
 }
 
 export interface RpcGetMessage {
@@ -16,7 +19,14 @@ export interface RpcGetMessage {
   path: PropertyPath
 }
 
-export type RpcMessage = RpcGetMessage
+export interface RpcApplyMessage {
+  id?: MessageId
+  type: RpcMessageType.APPLY
+  path: PropertyPath
+  args: unknown[]
+}
+
+export type RpcMessage = RpcGetMessage | RpcApplyMessage
 
 export interface RpcNormalResponse<Result> {
   id: MessageId
