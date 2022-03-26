@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { isProxy } from 'util/types'
+import type { Worker as WorkerThread } from 'worker_threads'
 import noop from 'lodash/noop'
 import { wrapRpc } from '@/index'
 import { RpcMessage, RpcResponse } from '@/protocol'
@@ -17,10 +18,10 @@ describe('wrapRpc(workerThread)', () => {
 
   it('should create a proxy', async () => {
     const rpc = wrapRpc({
-      addEventListener: onMessage,
-      removeEventListener: offMessage,
+      addListener: onMessage,
+      removeListener: offMessage,
       postMessage
-    })
+    } as unknown as WorkerThread)
 
     expect(isProxy(rpc)).toBeTruthy()
   })
@@ -41,11 +42,10 @@ describe('wrapRpc(workerThread)', () => {
     )
 
     const rpc = wrapRpc<{ name: string }>({
-      // @ts-expect-error ___
-      addEventListener: onMessage,
-      removeEventListener: offMessage,
+      addListener: onMessage,
+      removeListener: offMessage,
       postMessage
-    })
+    } as unknown as WorkerThread)
 
     expect(await rpc.name).toEqual('rpc response')
     expect(onMessage).toBeCalledTimes(1)

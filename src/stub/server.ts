@@ -7,6 +7,7 @@ import {
   NormalResponse,
   RpcMessage
 } from '../protocol'
+import { registerMessageListener } from './method'
 
 function createRcpNormalResult<Result>(
   id: MessageId,
@@ -23,8 +24,8 @@ export function createRcpExceptionResponse<Exception>(
 }
 
 export function exposeRpc(value: unknown, endpoint: Endpoint) {
-  endpoint.addEventListener(
-    'message',
+  registerMessageListener(
+    endpoint,
     function onmessage({ id, path }: RpcMessage) {
       if (isNil(id)) {
         return

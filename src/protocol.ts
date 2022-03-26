@@ -1,14 +1,8 @@
+import type { Worker as WorkerThread } from 'worker_threads'
 import type { PropertyPath } from 'lodash'
 import isNil from 'lodash/isNil'
 
-export interface Endpoint<Transferable = ArrayBuffer> {
-  addEventListener<Msg>(event: string, callback: (msg: Msg) => void): unknown
-  removeEventListener<Msg>(event: string, callback: (msg: Msg) => void): unknown
-  postMessage(
-    value: unknown,
-    transferable?: ReadonlyArray<Transferable>
-  ): unknown
-}
+export type Endpoint = Worker /* web worker */ | WorkerThread
 
 export type MessageId = string
 

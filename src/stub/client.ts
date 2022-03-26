@@ -9,6 +9,7 @@ import {
 } from '../protocol'
 import { createUuid } from '../utils'
 import { Remote } from './stub'
+import { registerMessageListener, unregisterMessageListener } from './method'
 
 function sendMessage<Response, Transferable extends ArrayBuffer>(
   endpoint: Endpoint,
@@ -17,13 +18,14 @@ function sendMessage<Response, Transferable extends ArrayBuffer>(
 ) {
   return new Promise<Response>((resolve, reject) => {
     const id = createUuid()
-    endpoint.addEventListener(
-      'message',
+
+    registerMessageListener(
+      endpoint,
       function onmessage(response: RpcResponse<Response>) {
         if (response.id !== id) {
           return
         }
-        endpoint.removeEventListener('message', onmessage)
+        unregisterMessageListener(endpoint, onmessage)
         if (isRpcExceptionResponse(response)) {
           return reject(response.error)
         }
