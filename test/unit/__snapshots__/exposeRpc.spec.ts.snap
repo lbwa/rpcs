@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`exposeRpc(value, endpoint) should expose worker scope to provide functionalities: expect unknown message type 1`] = `"Unknown message type undefined"`;

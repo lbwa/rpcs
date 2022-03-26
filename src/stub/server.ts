@@ -5,11 +5,12 @@ import {
   ExceptionResponse,
   MessageId,
   NormalResponse,
-  RpcMessage
+  RpcMessage,
+  RpcMessageType
 } from '../protocol'
 import { registerMessageListener } from './method'
 
-function createRcpNormalResult<Result>(
+export function createRcpNormalResult<Result>(
   id: MessageId,
   result: Result
 ): NormalResponse<Result> {
@@ -26,16 +27,22 @@ export function createRcpExceptionResponse<Exception>(
 export function exposeRpc(value: unknown, endpoint: Endpoint) {
   registerMessageListener(
     endpoint,
-    function onmessage({ id, path }: RpcMessage) {
+    function onmessage({ id, path, type }: RpcMessage = {} as RpcMessage) {
       if (isNil(id)) {
         return
       }
       try {
-        endpoint.postMessage(
-          createRcpNormalResult(id, get(value, path.join('.')))
-        )
+        if (type === RpcMessageType.GET) {
+          return endpoint.postMessage(
+            createRcpNormalResult(id, get(value, path))
+          )
+        }
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Unknown message type ${type}`)
       } catch (error) {
-        endpoint.postMessage(createRcpExceptionResponse(id, error))
+        endpoint.postMessage(
+          createRcpExceptionResponse(id, (error as Error)?.message ?? error)
+        )
       }
     }
   )

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { isProxy } from 'util/types'
-import type { Worker as WorkerThread } from 'worker_threads'
+import { Worker as WorkerThread } from 'worker_threads'
 import noop from 'lodash/noop'
 import { wrapRpc } from '@/index'
 import { RpcMessage, RpcResponse } from '@/protocol'
@@ -26,19 +26,19 @@ describe('wrapRpc(workerThread)', () => {
     expect(isProxy(rpc)).toBeTruthy()
   })
 
-  it('should wrap worker to implement RPC interface', async () => {
-    let sendResponse: typeof noop | null = noop
+  it('should wrap worker to implement RPC client interface', async () => {
+    let sendResponse = noop
     const onMessage = jest.fn(
       (_, onmessage: (res: RpcResponse<unknown>) => void) => {
         sendResponse = onmessage
       }
     )
     const offMessage = jest.fn(() => {
-      sendResponse = null
+      sendResponse = noop
     })
     const postMessage = jest.fn(({ id }: RpcMessage) =>
       // simulate remote response
-      sendResponse?.({ id, result: 'rpc response' })
+      sendResponse({ id, result: 'rpc response' })
     )
 
     const rpc = wrapRpc<{ name: string }>({
@@ -51,5 +51,19 @@ describe('wrapRpc(workerThread)', () => {
     expect(onMessage).toBeCalledTimes(1)
     expect(offMessage).toBeCalledTimes(1)
     expect(postMessage).toBeCalledTimes(1)
+  })
+
+  it("shouldn't emit value in a symbol", async () => {
+    const rpc = wrapRpc<{ name: string }>({
+      addListener: onMessage,
+      removeListener: offMessage,
+      postMessage
+    } as unknown as WorkerThread)
+
+    await expect(
+      // @ts-expect-error ___
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      (async () => await rpc[Symbol('name')])()
+    ).rejects.toMatchSnapshot()
   })
 })

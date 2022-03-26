@@ -13,7 +13,7 @@ export enum RpcMessageType {
 export interface RpcGetMessage {
   id?: MessageId
   type: RpcMessageType.GET
-  path: PropertyPath[]
+  path: PropertyPath
 }
 
 export type RpcMessage = RpcGetMessage
