@@ -1,7 +1,7 @@
 {
-  "name": "irpc",
+  "name": "rpcs",
   "version": "0.0.1",
-  "description": "Node.js RPC interface solution",
+  "description": "Convenient Node.js RPC interfaces",
   "main": "dist/index.js",
   "scripts": {
     "prepare": "husky install",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/lbwa/irpc.git"
+    "url": "git+ssh://git@github.com/lbwa/rpcs.git"
   },
   "keywords": [
     "rpc",
@@ -23,9 +23,9 @@
   "author": "Liu Bowen <asyncmode@outlook.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lbwa/irpc/issues"
+    "url": "https://github.com/lbwa/rpcs/issues"
   },
-  "homepage": "https://github.com/lbwa/irpc#readme",
+  "homepage": "https://github.com/lbwa/rpcs#readme",
   "devDependencies": {
     "@lbwa/eslint-plugin": "^0.3.1",
     "@lbwa/prettier-config": "^0.1.0",

@@ -1,8 +1,22 @@
-import type { Worker as WorkerThread } from 'worker_threads'
+import {
+  Worker as WorkerThread,
+  MessagePort as WorkerMessagePort
+} from 'worker_threads'
 import type { PropertyName } from 'lodash'
 import isNil from 'lodash/isNil'
 
-export type Endpoint = Worker /* web worker */ | WorkerThread
+export type BrowserEndpoint =
+  | Pick<Worker, 'addEventListener' | 'removeEventListener' | 'postMessage'>
+  | Pick<
+      MessagePort,
+      'addEventListener' | 'removeEventListener' | 'postMessage'
+    >
+
+export type NodeJsEndpoint =
+  | Pick<WorkerThread, 'addListener' | 'removeListener' | 'postMessage'>
+  | Pick<WorkerMessagePort, 'addListener' | 'removeListener' | 'postMessage'>
+
+export type RpcEndpoint = NodeJsEndpoint | BrowserEndpoint
 
 export type MessageId = string
 

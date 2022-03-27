@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line import/no-unresolved
 import { isProxy } from 'util/types'
-import { Worker as WorkerThread } from 'worker_threads'
+import type { MessagePort as WorkerMessagePort } from 'worker_threads'
 import noop from 'lodash/noop'
 import { wrapRpc } from '@/index'
-import { RpcMessage, RpcMessageType, RpcResponse } from '@/protocol'
+import { RpcMessage, RpcMessageType } from '@/protocol'
 
 describe('wrapRpc(workerThread)', () => {
-  const onMessage = jest.fn()
-  const offMessage = jest.fn()
+  const onMessage = jest.fn(function onmessage(this: WorkerMessagePort) {
+    return this
+  })
+  const offMessage = jest.fn(function offMessage(this: WorkerMessagePort) {
+    return this
+  })
   const postMessage = jest.fn()
 
   afterEach(() => {
@@ -21,31 +26,35 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    } as unknown as WorkerThread)
+    })
 
     expect(isProxy(rpc)).toBeTruthy()
   })
 
   it('should get remote property value', async () => {
     let sendResponse = noop
-    const onMessage = jest.fn(
-      (_, onmessage: (res: RpcResponse<unknown>) => void) => {
-        sendResponse = onmessage
-      }
-    )
-    const offMessage = jest.fn(() => {
-      sendResponse = noop
+    const onMessage = jest.fn(function onmessage(
+      this: WorkerMessagePort,
+      _,
+      onmessage: (res: any) => void
+    ) {
+      sendResponse = onmessage
+      return this
     })
-    const postMessage = jest.fn(({ id }: RpcMessage) =>
+    const offMessage = jest.fn(function offMessage(this: WorkerMessagePort) {
+      sendResponse = noop
+      return this
+    })
+    const postMessage = jest.fn(function postMessage({ id }: RpcMessage) {
       // simulate remote response
       sendResponse({ id, result: 'rpc response' })
-    )
+    })
 
     const rpc = wrapRpc<{ name: string }>({
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    } as unknown as WorkerThread)
+    })
 
     expect(await rpc.name).toEqual('rpc response')
     expect(onMessage).toBeCalledTimes(1)
@@ -58,7 +67,7 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    } as unknown as WorkerThread)
+    })
 
     await expect(
       // @ts-expect-error illegal usage
@@ -70,13 +79,17 @@ describe('wrapRpc(workerThread)', () => {
   it('should call remote function', async () => {
     const remoteCallReturn = 'remote getField("name") call'
     let sendResponse = noop
-    const onMessage = jest.fn(
-      (_, onmessage: (res: RpcResponse<unknown>) => void) => {
-        sendResponse = onmessage
-      }
-    )
-    const offMessage = jest.fn(() => {
+    const onMessage = jest.fn(function onmessage(
+      this: WorkerMessagePort,
+      _,
+      onmessage: (res: any) => void
+    ) {
+      sendResponse = onmessage
+      return this
+    })
+    const offMessage = jest.fn(function offMessage(this: WorkerMessagePort) {
       sendResponse = noop
+      return this
     })
     const postMessage = jest.fn((message: RpcMessage) => {
       // simulate remote response
@@ -94,7 +107,7 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    } as unknown as WorkerThread)
+    })
 
     expect(await rpc.getField('name')).toEqual(remoteCallReturn)
   })

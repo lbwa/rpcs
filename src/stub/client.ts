@@ -1,7 +1,7 @@
 import noop from 'lodash/noop'
 import isSymbol from 'lodash/isSymbol'
 import {
-  Endpoint,
+  RpcEndpoint,
   RpcMessage,
   RpcMessageType,
   RpcResponse,
@@ -11,19 +11,35 @@ import {
 } from '../protocol'
 import { createUuid } from '../utils'
 import { Remote } from './stub'
-import { registerMessageListener, unregisterMessageListener } from './method'
+import {
+  registerMessageListener,
+  sendRpcMessage,
+  unregisterMessageListener
+} from './adapter'
 
-function sendMessage<Response, Transferable extends ArrayBuffer>(
+function sendMessage<
+  Endpoint extends RpcEndpoint,
+  Response,
+  Transferable extends ArrayBuffer
+>(
   endpoint: Endpoint,
   msg: RpcGetMessage,
   transfer?: Transferable[]
 ): Promise<Response>
-function sendMessage<Response, Transferable extends ArrayBuffer>(
+function sendMessage<
+  Endpoint extends RpcEndpoint,
+  Response,
+  Transferable extends ArrayBuffer
+>(
   endpoint: Endpoint,
   msg: RpcApplyMessage,
   transfer?: Transferable[]
 ): Promise<Response>
-function sendMessage<Response, Transferable extends ArrayBuffer>(
+function sendMessage<
+  Endpoint extends RpcEndpoint,
+  Response,
+  Transferable extends ArrayBuffer
+>(
   endpoint: Endpoint,
   msg: RpcMessage,
   transfer?: Transferable[]
@@ -44,11 +60,14 @@ function sendMessage<Response, Transferable extends ArrayBuffer>(
         resolve(response.result)
       }
     )
-    endpoint.postMessage({ id, ...msg }, transfer)
+    sendRpcMessage(endpoint, { id, ...msg }, transfer)
   })
 }
 
-function createProxy<T>(endpoint: Endpoint, path: string[]): Remote<T> {
+function createProxy<T, Endpoint extends RpcEndpoint>(
+  endpoint: Endpoint,
+  path: string[]
+): Remote<T> {
   const proxy = new Proxy(noop, {
     get(_, prop) {
       // make `await p.remoteProp` works
@@ -87,6 +106,8 @@ function createProxy<T>(endpoint: Endpoint, path: string[]): Remote<T> {
   return proxy
 }
 
-export function wrapRpc<T>(endpoint: Endpoint): Remote<T> {
-  return createProxy<T>(endpoint, [])
+export function wrapRpc<T, Endpoint extends RpcEndpoint = RpcEndpoint>(
+  endpoint: Endpoint
+): Remote<T> {
+  return createProxy<T, Endpoint>(endpoint, [])
 }

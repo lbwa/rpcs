@@ -2,14 +2,14 @@ import isFunction from 'lodash/isFunction'
 import get from 'lodash/get'
 import isNil from 'lodash/isNil'
 import {
-  Endpoint,
+  RpcEndpoint,
   RpcExceptionResponse,
   MessageId,
   RpcNormalResponse,
   RpcMessage,
   RpcMessageType
 } from '../protocol'
-import { registerMessageListener } from './method'
+import { registerMessageListener, sendRpcMessage } from './adapter'
 
 export function createRpcNormalResult<Result>(
   id: MessageId,
@@ -25,7 +25,10 @@ export function createRpcExceptionResponse<Exception>(
   return { id, error: exception }
 }
 
-export function exposeRpc(value: unknown, endpoint: Endpoint) {
+export function exposeRpc<Endpoint extends RpcEndpoint>(
+  value: unknown,
+  endpoint: Endpoint
+) {
   registerMessageListener(
     endpoint,
     function onmessage(message: RpcMessage = {} as RpcMessage) {
@@ -41,12 +44,14 @@ export function exposeRpc(value: unknown, endpoint: Endpoint) {
       try {
         switch (type) {
           case RpcMessageType.GET:
-            return endpoint.postMessage(
+            return sendRpcMessage(
+              endpoint,
               createRpcNormalResult(id, get(value, path))
             )
           case RpcMessageType.APPLY:
             if (isFunction(current)) {
-              return endpoint.postMessage(
+              return sendRpcMessage(
+                endpoint,
                 createRpcNormalResult(id, current.apply(parent, message.args))
               )
             }
@@ -58,7 +63,8 @@ export function exposeRpc(value: unknown, endpoint: Endpoint) {
             throw new Error(`Unknown message type ${type}`)
         }
       } catch (error) {
-        endpoint.postMessage(
+        sendRpcMessage(
+          endpoint,
           createRpcExceptionResponse(id, (error as Error)?.message ?? error)
         )
       }
