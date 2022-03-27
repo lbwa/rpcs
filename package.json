@@ -2,15 +2,15 @@
   "name": "rpcs",
   "version": "0.1.0",
   "description": "Convenient Node.js RPC interfaces",
-  "main": "dist/index.js",
-  "scripts": {
-    "prepare": "husky install",
-    "prepublishOnly": "pnpm build",
-    "build": "esw build src/index.ts",
-    "watch": "esw watch src/index.ts",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,less,md}\"",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "test": "jest"
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,22 @@
     "url": "https://github.com/lbwa/rpcs/issues"
   },
   "homepage": "https://github.com/lbwa/rpcs#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "prepublishOnly": "pnpm build",
+    "build": "esw build src/index.ts && tsc -p tsconfig.json",
+    "watch": "esw watch src/index.ts",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,less,md}\"",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "jest"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
   "devDependencies": {
     "@lbwa/eslint-plugin": "^0.3.1",
     "@lbwa/prettier-config": "^0.1.0",
@@ -34,7 +50,7 @@
     "@types/lodash": "^4.14.180",
     "@types/node": "^17.0.22",
     "eslint": "^8.11.0",
-    "esw": "^0.14.0",
+    "esw": "^0.14.1",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "lint-staged": "^12.3.7",
@@ -52,12 +68,5 @@
     "**/*.{js,jsx,ts,tsx}": [
       "eslint --fix"
     ]
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
   }
 }

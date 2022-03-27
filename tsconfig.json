@@ -3,6 +3,8 @@
   "compileOnSave": true,
   "compilerOptions": {
     "incremental": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"]
