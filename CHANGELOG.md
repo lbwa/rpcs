@@ -1,5 +1,11 @@
 # Changelog
 
+### [0.1.1](https://github.com/lbwa/rpcs/compare/v0.1.0...v0.1.1) (2022-03-27)
+
+### Bug Fixes
+
+- support esm product ([e3a776e](https://github.com/lbwa/rpcs/commit/e3a776e0dbec2521ddccae113f1b0adbf581348b))
+
 ## 0.1.0 (2022-03-27)
 
 ### Features
