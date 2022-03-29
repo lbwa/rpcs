@@ -50,7 +50,7 @@ exposeRpc(
 
 ## Compatibility
 
-Our implementation is built on top of Proxy([Node.js compatible](https://node.green/#ES2015-built-ins-Proxy) and [Browser compatible](https://caniuse.com/?search=Proxy)) object and Worker/MessagePort interface.
+Our implementation is built on top of Proxy([Node.js compatibility](https://node.green/#ES2015-built-ins-Proxy) and [Browser compatibility](https://caniuse.com/?search=Proxy)) object and Worker/MessagePort interface.
 
 ## License
 
