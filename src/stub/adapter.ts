@@ -5,7 +5,7 @@ import { UniversalFunc } from './stub'
 import { RpcEndpoint, NodeJsEndpoint, BrowserEndpoint } from '@/protocol'
 
 export function isWebEndpoint(endpoint: unknown): endpoint is BrowserEndpoint {
-  return ['addEventListener', 'removeListener', 'postMessage'].every(m =>
+  return ['addEventListener', 'removeEventListener', 'postMessage'].every(m =>
     isFunction(get(endpoint, m))
   )
 }
@@ -22,11 +22,12 @@ export function registerMessageListener<
   Endpoint extends RpcEndpoint,
   OnMessage extends UniversalFunc
 >(endpoint: Endpoint, onMessage: OnMessage) {
-  if (isWebEndpoint(endpoint)) {
-    endpoint.addEventListener('message', onMessage)
-  }
   if (isNodeJsEndpoint(endpoint)) {
     endpoint.addListener('message', onMessage)
+    return
+  }
+  if (isWebEndpoint(endpoint)) {
+    endpoint.addEventListener('message', onMessage)
   }
 }
 
@@ -34,11 +35,12 @@ export function unregisterMessageListener<
   Endpoint extends RpcEndpoint,
   OnMessage extends UniversalFunc
 >(endpoint: Endpoint, onMessage: OnMessage) {
-  if (isWebEndpoint(endpoint)) {
-    endpoint.removeEventListener('message', onMessage)
-  }
   if (isNodeJsEndpoint(endpoint)) {
     endpoint.removeListener('message', onMessage)
+    return
+  }
+  if (isWebEndpoint(endpoint)) {
+    endpoint.removeEventListener('message', onMessage)
   }
 }
 
