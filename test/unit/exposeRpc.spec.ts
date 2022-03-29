@@ -88,6 +88,7 @@ describe('exposeRpc(value, endpoint)', () => {
         path: ['getField'],
         args: ['name']
       })
+      await Promise.resolve()
       expect(postMessage).toBeCalledTimes(1)
       const [response] = (postMessage.mock.calls[0] ?? []) as [
         RpcNormalResponse<string>
@@ -108,6 +109,7 @@ describe('exposeRpc(value, endpoint)', () => {
         path: ['provide', 'time'],
         args: [2, 3]
       })
+      await Promise.resolve()
       expect(postMessage).toBeCalledTimes(1)
       const [response] = (postMessage.mock.calls[0] ?? []) as [
         RpcNormalResponse<number>

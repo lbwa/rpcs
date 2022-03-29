@@ -1,15 +1,15 @@
 # rpcs
 
-[![Test cases](https://github.com/lbwa/rpcs/actions/workflows/test.yml/badge.svg)](https://github.com/lbwa/rpcs/actions/workflows/test.yml)
+[![Test cases](https://github.com/lbwa/rpcs/actions/workflows/test.yml/badge.svg)](https://github.com/lbwa/rpcs/actions/workflows/test.yml) [![npm version](https://img.shields.io/npm/v/rpcs/latest?style=flat-square)](https://npmjs.com/rpcs)
 
 Provides a set of **R**emote **P**rocedure **C**all interface.
 
 ## Features
 
-- Use Worker thread, WebWorker without pain
-- Always asynchronously and never block main thread
-- Call remote method like locals
-- Get remote state with Promise
+- 👷‍♂️Use Worker thread, WebWorker, MessagePort without pain
+- 🆓Keep all actions asynchronously and never block main thread
+- 🤙Call remote methods asynchronously like locals
+- 📞Get remote states asynchronously like locals
 
 ## Installation
 
@@ -46,6 +46,12 @@ exposeRpc(
 )
 ```
 
+> Note: method should always return a value which could be cloned by [HTML structured clone algorithm](https://nodejs.org/dist/latest-v17.x/docs/api/worker_threads.html#considerations-when-cloning-objects-with-prototypes-classes-and-accessors).
+
+## Compatibility
+
+Our implementation is built on top of Proxy([Node.js compatible](https://node.green/#ES2015-built-ins-Proxy) and [Browser compatible](https://caniuse.com/?search=Proxy)) object and Worker/MessagePort interface.
+
 ## License
 
-MIT © Liu Bowen
+[MIT](./LICENSE) © [Liu Bowen](https://github.com/lbwa)

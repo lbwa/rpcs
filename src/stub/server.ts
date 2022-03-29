@@ -31,7 +31,7 @@ export function exposeRpc<Endpoint extends RpcEndpoint>(
 ) {
   registerMessageListener(
     endpoint,
-    function onmessage(message: RpcMessage = {} as RpcMessage) {
+    async function onmessage(message: RpcMessage = {} as RpcMessage) {
       const { id, path = [], type } = message
       if (isNil(id)) {
         return
@@ -52,7 +52,10 @@ export function exposeRpc<Endpoint extends RpcEndpoint>(
             if (isFunction(current)) {
               return sendRpcMessage(
                 endpoint,
-                createRpcNormalResult(id, current.apply(parent, message.args))
+                createRpcNormalResult(
+                  id,
+                  await current.apply(parent, message.args)
+                )
               )
             }
             throw new Error(
