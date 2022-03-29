@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0](https://github.com/lbwa/rpcs/compare/v0.1.1...v0.2.0) (2022-03-29)
+
+### Features
+
+- support promise return in exposeRpc's method ([3c191c5](https://github.com/lbwa/rpcs/commit/3c191c5401dade74e01ee123b71fba4dfc5fc843)), closes [#1](https://github.com/lbwa/rpcs/issues/1)
+
+### Bug Fixes
+
+- endpoint judgment ([cbf3368](https://github.com/lbwa/rpcs/commit/cbf336841f3bb379adbdae5768af4c9c8c4c8a9f)), closes [#2](https://github.com/lbwa/rpcs/issues/2)
+
 ### [0.1.1](https://github.com/lbwa/rpcs/compare/v0.1.0...v0.1.1) (2022-03-27)
 
 ### Bug Fixes
