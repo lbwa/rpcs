@@ -1,5 +1,11 @@
 # Changelog
 
+### [0.2.1](https://github.com/lbwa/rpcs/compare/v0.2.0...v0.2.1) (2022-03-30)
+
+### Bug Fixes
+
+- not only error message, but also error object when evalution failed ([f5143f0](https://github.com/lbwa/rpcs/commit/f5143f04265e0599070018d8bd07131c21f41c3d))
+
 ## [0.2.0](https://github.com/lbwa/rpcs/compare/v0.1.1...v0.2.0) (2022-03-29)
 
 ### Features
