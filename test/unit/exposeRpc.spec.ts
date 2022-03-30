@@ -36,13 +36,15 @@ describe('exposeRpc(value, endpoint)', () => {
       })
       expect(postMessage).toBeCalledTimes(1)
       const [response] = (postMessage.mock.calls[0] ?? []) as [
-        RpcExceptionResponse
+        RpcExceptionResponse<Error>
       ]
       expect(response.id).toEqual(12)
       expect(
         (response as unknown as RpcNormalResponse<unknown>).result
       ).toBeUndefined()
-      expect(response.error).toMatchSnapshot('expect unknown message type')
+      expect(response.error.message).toMatchSnapshot(
+        'expect unknown message type'
+      )
       postMessage.mockReset()
     }
 
@@ -119,6 +121,39 @@ describe('exposeRpc(value, endpoint)', () => {
         (response as unknown as RpcExceptionResponse).error
       ).toBeUndefined()
       expect(response.result).toEqual(6)
+    }
+  })
+
+  it('should return rejected promises', async () => {
+    const ee = new EventEmitter() as WorkerThread
+    const postMessage = jest.fn()
+    Object.assign(ee, { postMessage })
+    const errorMessage = 'error from getThrow()'
+    const data = {
+      getThrow() {
+        throw new Error(errorMessage)
+      }
+    }
+    exposeRpc(data, ee)
+
+    {
+      ee.emit('message', {
+        id: 1,
+        type: RpcMessageType.APPLY,
+        path: ['getThrow'],
+        args: []
+      })
+
+      await Promise.resolve()
+      expect(postMessage).toBeCalledTimes(1)
+      const [response] = (postMessage.mock.calls[0] ?? []) as [
+        RpcExceptionResponse<Error>
+      ]
+      expect(response.id).toEqual(1)
+      expect(response.error.message).toEqual(errorMessage)
+      expect(
+        (response as unknown as RpcNormalResponse<unknown>).result
+      ).toBeUndefined()
     }
   })
 })

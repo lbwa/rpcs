@@ -25,10 +25,10 @@ export function createRpcExceptionResponse<Exception>(
   return { id, error: exception }
 }
 
-export function exposeRpc<Endpoint extends RpcEndpoint>(
-  value: unknown,
-  endpoint: Endpoint
-) {
+export function exposeRpc<
+  Value extends Record<string, unknown>,
+  Endpoint extends RpcEndpoint
+>(value: Value, endpoint: Endpoint) {
   registerMessageListener(
     endpoint,
     async function onmessage(message: RpcMessage = {} as RpcMessage) {
@@ -66,10 +66,7 @@ export function exposeRpc<Endpoint extends RpcEndpoint>(
             throw new Error(`Unknown message type ${type}`)
         }
       } catch (error) {
-        sendRpcMessage(
-          endpoint,
-          createRpcExceptionResponse(id, (error as Error)?.message ?? error)
-        )
+        sendRpcMessage(endpoint, createRpcExceptionResponse(id, error as Error))
       }
     }
   )
