@@ -31,4 +31,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
+      - run: pnpm build
       - run: pnpm t -- --ci --coverage
