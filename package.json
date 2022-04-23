@@ -4,7 +4,7 @@
   "description": "Convenient Node.js RPC interfaces",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "default": "./dist/index.cjs",
@@ -36,7 +36,7 @@
   "scripts": {
     "prepare": "husky install",
     "prepublishOnly": "pnpm build",
-    "build": "esw build src/index.ts && tsc -p tsconfig.json",
+    "build": "esw build src/index.ts && tsc -p tsconfig.build.json",
     "watch": "esw watch src/index.ts",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,less,md}\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
