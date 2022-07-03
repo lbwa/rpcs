@@ -6,7 +6,7 @@ import type {
   MessagePort as WorkerMessagePort
 } from 'worker_threads'
 import noop from 'lodash/noop'
-import { wrapRpc } from '@/index'
+import { connectPipe } from '@/index'
 import { RpcMessage, RpcMessageType } from '@/protocol'
 
 describe('wrapRpc(workerThread)', () => {
@@ -25,7 +25,7 @@ describe('wrapRpc(workerThread)', () => {
   })
 
   it('should create a proxy', async () => {
-    const rpc = wrapRpc({
+    const rpc = connectPipe({
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
@@ -53,7 +53,7 @@ describe('wrapRpc(workerThread)', () => {
       sendResponse({ id, result: 'rpc response' })
     })
 
-    const rpc = wrapRpc<{ name: string }>({
+    const rpc = connectPipe<{ name: string }>({
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
@@ -66,7 +66,7 @@ describe('wrapRpc(workerThread)', () => {
   })
 
   it("shouldn't emit value in a symbol", async () => {
-    const rpc = wrapRpc<{ name: string }>({
+    const rpc = connectPipe<{ name: string }>({
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
@@ -106,7 +106,7 @@ describe('wrapRpc(workerThread)', () => {
       }
       throw new Error('Exception')
     })
-    const rpc = wrapRpc<{ getField(name: string): string }>({
+    const rpc = connectPipe<{ getField(name: string): string }>({
       addListener: onMessage,
       removeListener: offMessage,
       postMessage

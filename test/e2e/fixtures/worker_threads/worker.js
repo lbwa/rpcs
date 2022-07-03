@@ -1,7 +1,7 @@
 const { parentPort } = require('worker_threads')
-const { exposeRpc } = require('../../../../dist/index.cjs')
+const { exposePipe } = require('../../../../dist/index.cjs')
 
-exposeRpc(
+exposePipe(
   {
     primitive: 1,
     object: { name: 'worker name' },

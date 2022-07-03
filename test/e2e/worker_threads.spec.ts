@@ -8,7 +8,7 @@ describe('worker_threads', () => {
     worker = new Worker(
       path.resolve(__dirname, './fixtures/worker_threads/worker.js')
     )
-    handler = require('../../dist/index.cjs').wrapRpc(worker)
+    handler = require('../../dist/index.cjs').connectPipe(worker)
   })
 
   afterAll(async () => {
