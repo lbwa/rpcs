@@ -1,6 +1,9 @@
 module.exports = {
   plugins: ['@lbwa'],
   extends: ['plugin:@lbwa/recommended'],
+  rules: {
+    '@typescript-eslint/no-explicit-any': 'off'
+  },
   overrides: [
     {
       files: ['**/*.spec.ts'],
