@@ -3,12 +3,14 @@ import isSymbol from 'lodash/isSymbol'
 import { RpcEndpoint, RpcMessageType } from '../protocol'
 import { Remote } from './stub'
 import { enhanceConnection } from '@/adapter'
+import { createRequest } from '@/adapter/utils'
 
 function createProxy<T, Endpoint extends RpcEndpoint>(
   endpoint: Endpoint,
   path: string[]
 ): Remote<T> {
   const conn = enhanceConnection(endpoint)
+  const request = createRequest(conn)
   const proxy = new Proxy(noop, {
     get(_, prop) {
       // make `await p.remoteProp` works
@@ -18,7 +20,7 @@ function createProxy<T, Endpoint extends RpcEndpoint>(
           return { then: () => proxy }
         }
 
-        const ans = conn.request({
+        const ans = request({
           type: RpcMessageType.GET,
           path
         })
@@ -37,7 +39,7 @@ function createProxy<T, Endpoint extends RpcEndpoint>(
       if (last === 'bind') {
         return createProxy(endpoint, path.slice(0, -1))
       }
-      return conn.request({
+      return request({
         type: RpcMessageType.APPLY,
         path,
         args

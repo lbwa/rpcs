@@ -1,13 +1,8 @@
 import { Worker } from 'worker_threads'
 import isNil from 'lodash/isNil'
 import { AdaptorEvent, ConnectionHandler, UniversalAdaptor } from './interface'
+import { InferTransferable } from '@/protocol'
 import { UniversalFn } from '@/stub/stub'
-import {
-  InferTransferable,
-  isRpcExceptionResponse,
-  RpcResponse
-} from '@/protocol'
-import { createUid } from '@/utils'
 
 export class WorkerThreadAdaptor implements UniversalAdaptor<Worker> {
   private listeners = new Map<string, WeakMap<UniversalFn, UniversalFn<this>>>()
@@ -45,27 +40,5 @@ export class WorkerThreadAdaptor implements UniversalAdaptor<Worker> {
     transferable?: InferTransferable<Worker>
   ): void {
     this.client.postMessage(data, transferable)
-  }
-
-  async request<Data, Response>(
-    payload: Data,
-    transferable?: InferTransferable<Worker>
-  ): Promise<Response> {
-    const uid = createUid()
-
-    return new Promise<Response>((resolve, reject) => {
-      const onmessage = (response: RpcResponse<Response>) => {
-        if (response?.id !== uid) {
-          return
-        }
-        this.off(AdaptorEvent.MESSAGE, onmessage)
-        if (isRpcExceptionResponse(response)) {
-          return reject(response.error)
-        }
-        resolve(response.result)
-      }
-      this.on(AdaptorEvent.MESSAGE, onmessage)
-      this.postMessage(Object.assign({ id: uid }, payload), transferable)
-    })
   }
 }

@@ -13,8 +13,4 @@ export class UnknownAdaptor implements UniversalAdaptor<RpcEndpoint> {
   postMessage(): void {
     throw new Error(UNKNOWN_WARNING)
   }
-
-  request<Response>(): Promise<Response> {
-    throw new Error(UNKNOWN_WARNING)
-  }
 }

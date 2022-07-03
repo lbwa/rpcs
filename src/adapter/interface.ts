@@ -19,14 +19,10 @@ export type ConnectionHandler<Callee, ResponseData> =
 
 export interface UniversalAdaptor<Client> {
   client: Client
-  on<Fn extends ConnectionHandler<this, unknown>>(
+  on<Fn extends ConnectionHandler<this, Response>, Response = unknown>(
     event: AdaptorEvent,
     fn: Fn
   ): void
   off?<Fn extends UniversalFn>(event: AdaptorEvent, fn?: Fn): void
   postMessage<Data>(data: Data, transferable?: InferTransferable<Client>): void
-  request<Data, Response>(
-    data: Data,
-    transferable?: InferTransferable<Client>
-  ): Promise<Response>
 }
