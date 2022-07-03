@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 import { Worker as WorkerThread } from 'worker_threads'
-import { exposeRpc } from '@/index'
+import { exposePipe } from '@/index'
 import {
   RpcExceptionResponse,
   RpcNormalResponse,
@@ -15,7 +15,7 @@ describe('exposeRpc(value, endpoint)', () => {
       postMessage
     })
     const data = { person: { name: 'person name' } }
-    exposeRpc(data, ee)
+    exposePipe(data, ee)
     ee.emit('message')
     expect(postMessage).not.toBeCalled()
   })
@@ -27,7 +27,7 @@ describe('exposeRpc(value, endpoint)', () => {
       postMessage
     })
     const data = { person: { name: 'person name' } }
-    exposeRpc(data, ee)
+    exposePipe(data, ee)
 
     {
       ee.emit('message', {
@@ -81,7 +81,7 @@ describe('exposeRpc(value, endpoint)', () => {
         }
       }
     }
-    exposeRpc(data, ee)
+    exposePipe(data, ee)
 
     {
       ee.emit('message', {
@@ -134,7 +134,7 @@ describe('exposeRpc(value, endpoint)', () => {
         throw new Error(errorMessage)
       }
     }
-    exposeRpc(data, ee)
+    exposePipe(data, ee)
 
     {
       ee.emit('message', {

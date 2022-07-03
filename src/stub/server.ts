@@ -26,7 +26,7 @@ export function createRpcExceptionResponse<Exception>(
   return { id, error: exception }
 }
 
-export function exposeRpc<
+export function exposePipe<
   Value extends Record<string, unknown>,
   Endpoint extends RpcEndpoint
 >(value: Value, endpoint: Endpoint) {

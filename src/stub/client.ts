@@ -47,7 +47,7 @@ function createProxy<T, Endpoint extends RpcEndpoint>(
   return proxy
 }
 
-export function wrapRpc<T, Endpoint extends RpcEndpoint = RpcEndpoint>(
+export function connectPipe<T, Endpoint extends RpcEndpoint = RpcEndpoint>(
   endpoint: Endpoint
 ): Remote<T> {
   return createProxy<T, Endpoint>(endpoint, [])
