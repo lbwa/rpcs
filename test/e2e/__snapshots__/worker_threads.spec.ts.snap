@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`worker_threads should catch unavailable calling: catch unavailable calling 1`] = `[Error: <REMOTE>.randomCall isn't a callable function.]`;
+exports[`worker_threads should catch unavailable calling: catch unavailable calling 1`] = `[Error: <REMOTE>.randomCall is NOT callable.]`;
 
 exports[`worker_threads should get method calling: catch reject promise 1`] = `"rejected promises from worker thread"`;
