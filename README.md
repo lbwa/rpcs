@@ -2,13 +2,14 @@
 
 [![Test cases](https://github.com/lbwa/rpcs/actions/workflows/test.yml/badge.svg)](https://github.com/lbwa/rpcs/actions/workflows/test.yml) [![npm version](https://img.shields.io/npm/v/rpcs/latest?style=flat-square)](https://npmjs.com/rpcs)
 
-Provide **R**emote **P**rocedure **C**all interfaces.
+Provide declarative **type-safe** **R**emote **P**rocedure **C**all interfaces.
 
 ## Features
 
-- 👷‍♂️Use Worker thread, WebWorker, and MessagePort without pain
+- 💪Always type-safe
+- 👷‍♂️Work with Worker thread, Web worker, and MessagePort without pain
 - 🆓Keep all actions asynchronously and never block the main thread
-- 🤙Call remote methods/states like locals
+- 🤙Declarative remote method & states calling like locals
 
 ## Installation
 
@@ -52,7 +53,7 @@ import type { Remote } from './remote' // NOTICE: we only import type from remot
 
 ## Compatibility
 
-Our implementation is built on top of the Proxy ([Node.js compatibility](https://node.green/#ES2015-built-ins-Proxy) and [Browser compatibility](https://caniuse.com/?search=Proxy)) object and Worker/MessagePort interface.
+The latest version of rpcs only supports runtime with native [ECMAScript 6(AKA, ES2015)](https://caniuse.com/es6) support.
 
 ## License
 
