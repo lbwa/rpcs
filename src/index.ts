@@ -1,2 +1,2 @@
-export * from './stub/client'
-export * from './stub/server'
+export { connectPipe } from './stub/client'
+export { exposePipe } from './stub/server'

@@ -12,14 +12,14 @@ import {
 import { enhanceConnection } from '@/adapter'
 import { AdaptorEvent } from '@/adapter/interface'
 
-export function createRpcNormalResult<Result>(
+function createRpcNormalResult<Result>(
   id: MessageId,
   result: Result
 ): RpcNormalResponse<Result> {
   return { id, result }
 }
 
-export function createRpcExceptionResponse<Exception>(
+function createRpcExceptionResponse<Exception>(
   id: MessageId,
   exception: Exception
 ): RpcExceptionResponse<Exception> {
