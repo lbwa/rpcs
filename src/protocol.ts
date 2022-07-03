@@ -6,11 +6,11 @@ import type {
 import type { PropertyName } from 'lodash'
 import isNil from 'lodash/isNil'
 
-export type NodeJsClient = WorkerThread | WorkerMessagePort
+export type NodeEndpoint = WorkerThread | WorkerMessagePort
 
-export type BrowserClient = Worker | MessagePort
+export type BrowserEndpoint = Worker | MessagePort
 
-export type RpcEndpoint = NodeJsClient | BrowserClient
+export type RpcEndpoint = NodeEndpoint | BrowserEndpoint
 
 export type MessageId = string
 
@@ -68,7 +68,7 @@ export function isRpcExceptionResponse<Exception>(
 
 export type InferTransferable<Endpoint> = Endpoint extends
   | WorkerThread
-  | WorkerMessagePort // worker_thread like
+  | WorkerMessagePort // worker message port like
   ? ReadonlyArray<TransferListItem>
   : Endpoint extends Worker | MessagePort // browser like
   ? Transferable

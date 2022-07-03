@@ -46,7 +46,9 @@ export function exposeRpc<
             return this.postMessage(createRpcNormalResult(message.id, target))
           case RpcMessageType.APPLY:
             if (!isFunction(target)) {
-              throw new Error(`${message.path?.join('.')} is NOT callable.`)
+              throw new Error(
+                `<REMOTE>.${message.path?.join('.')} is NOT callable.`
+              )
             }
             return this.postMessage(
               createRpcNormalResult(
