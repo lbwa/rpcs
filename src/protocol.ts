@@ -1,22 +1,16 @@
-import {
+import type {
   Worker as WorkerThread,
-  MessagePort as WorkerMessagePort
+  MessagePort as WorkerMessagePort,
+  TransferListItem
 } from 'worker_threads'
 import type { PropertyName } from 'lodash'
 import isNil from 'lodash/isNil'
 
-export type BrowserEndpoint =
-  | Pick<Worker, 'addEventListener' | 'removeEventListener' | 'postMessage'>
-  | Pick<
-      MessagePort,
-      'addEventListener' | 'removeEventListener' | 'postMessage'
-    >
+export type NodeJsClient = WorkerThread | WorkerMessagePort
 
-export type NodeJsEndpoint =
-  | Pick<WorkerThread, 'addListener' | 'removeListener' | 'postMessage'>
-  | Pick<WorkerMessagePort, 'addListener' | 'removeListener' | 'postMessage'>
+export type BrowserClient = Worker | MessagePort
 
-export type RpcEndpoint = NodeJsEndpoint | BrowserEndpoint
+export type RpcEndpoint = NodeJsClient | BrowserClient
 
 export type MessageId = string
 
@@ -33,14 +27,14 @@ export interface RpcGetMessage {
   path: PropertyPath
 }
 
-export interface RpcApplyMessage {
+export interface RpcApplyMessage<Args> {
   id?: MessageId
   type: RpcMessageType.APPLY
   path: PropertyPath
-  args: unknown[]
+  args: Args[]
 }
 
-export type RpcMessage = RpcGetMessage | RpcApplyMessage
+export type RpcMessage<Args = unknown> = RpcGetMessage | RpcApplyMessage<Args>
 
 export interface RpcNormalResponse<Result> {
   id: MessageId
@@ -71,3 +65,11 @@ export function isRpcExceptionResponse<Exception>(
     key => !isNil((data as Record<string, unknown>)[key as keyof typeof data])
   )
 }
+
+export type InferTransferable<Endpoint> = Endpoint extends
+  | WorkerThread
+  | WorkerMessagePort // worker_thread like
+  ? ReadonlyArray<TransferListItem>
+  : Endpoint extends Worker | MessagePort // browser like
+  ? Transferable
+  : never // eg. child_process

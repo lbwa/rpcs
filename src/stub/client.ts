@@ -1,73 +1,14 @@
 import noop from 'lodash/noop'
 import isSymbol from 'lodash/isSymbol'
-import {
-  RpcEndpoint,
-  RpcMessage,
-  RpcMessageType,
-  RpcResponse,
-  isRpcExceptionResponse,
-  RpcGetMessage,
-  RpcApplyMessage
-} from '../protocol'
-import { createUuid } from '../utils'
+import { RpcEndpoint, RpcMessageType } from '../protocol'
 import { Remote } from './stub'
-import {
-  registerMessageListener,
-  sendRpcMessage,
-  unregisterMessageListener
-} from './adapter'
-
-function sendMessage<
-  Endpoint extends RpcEndpoint,
-  Response,
-  Transferable extends ArrayBuffer
->(
-  endpoint: Endpoint,
-  msg: RpcGetMessage,
-  transfer?: Transferable[]
-): Promise<Response>
-function sendMessage<
-  Endpoint extends RpcEndpoint,
-  Response,
-  Transferable extends ArrayBuffer
->(
-  endpoint: Endpoint,
-  msg: RpcApplyMessage,
-  transfer?: Transferable[]
-): Promise<Response>
-function sendMessage<
-  Endpoint extends RpcEndpoint,
-  Response,
-  Transferable extends ArrayBuffer
->(
-  endpoint: Endpoint,
-  msg: RpcMessage,
-  transfer?: Transferable[]
-): Promise<Response> {
-  return new Promise<Response>((resolve, reject) => {
-    const id = createUuid()
-
-    registerMessageListener(
-      endpoint,
-      function onmessage(response: RpcResponse<Response>) {
-        if (response.id !== id) {
-          return
-        }
-        unregisterMessageListener(endpoint, onmessage)
-        if (isRpcExceptionResponse(response)) {
-          return reject(response.error)
-        }
-        resolve(response.result)
-      }
-    )
-    sendRpcMessage(endpoint, { id, ...msg }, transfer)
-  })
-}
+import { enhanceConnection } from '@/adapter'
 
 function createProxy<T, Endpoint extends RpcEndpoint>(
   endpoint: Endpoint,
   path: string[]
 ): Remote<T> {
+  const conn = enhanceConnection(endpoint)
   const proxy = new Proxy(noop, {
     get(_, prop) {
       // make `await p.remoteProp` works
@@ -77,7 +18,7 @@ function createProxy<T, Endpoint extends RpcEndpoint>(
           return { then: () => proxy }
         }
 
-        const ans = sendMessage(endpoint, {
+        const ans = conn.request({
           type: RpcMessageType.GET,
           path
         })
@@ -96,7 +37,7 @@ function createProxy<T, Endpoint extends RpcEndpoint>(
       if (last === 'bind') {
         return createProxy(endpoint, path.slice(0, -1))
       }
-      return sendMessage(endpoint, {
+      return conn.request({
         type: RpcMessageType.APPLY,
         path,
         args

@@ -1,9 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type UniversalFunc = (...args: any[]) => unknown
+export type UniversalFn<Callee = unknown> = (
+  this: Callee,
+  ...args: any[]
+) => unknown
 
 type Promisify<T> = T extends Promise<unknown> ? T : Promise<T>
 
-type RemoteProp<T> = T extends UniversalFunc ? Remote<T> : Promisify<T>
+type RemoteProp<T> = T extends UniversalFn ? Remote<T> : Promisify<T>
 
 type RemoteDic<T> = {
   [P in keyof T]: RemoteProp<T[P]>

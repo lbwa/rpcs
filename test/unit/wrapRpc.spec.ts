@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line import/no-unresolved
 import { isProxy } from 'util/types'
-import type { MessagePort as WorkerMessagePort } from 'worker_threads'
+import type {
+  Worker as WorkerThread,
+  MessagePort as WorkerMessagePort
+} from 'worker_threads'
 import noop from 'lodash/noop'
 import { wrapRpc } from '@/index'
 import { RpcMessage, RpcMessageType } from '@/protocol'
@@ -26,7 +29,7 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    })
+    } as unknown as WorkerThread)
 
     expect(isProxy(rpc)).toBeTruthy()
   })
@@ -54,7 +57,7 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    })
+    } as unknown as WorkerThread)
 
     expect(await rpc.name).toEqual('rpc response')
     expect(onMessage).toBeCalledTimes(1)
@@ -67,7 +70,7 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    })
+    } as unknown as WorkerThread)
 
     await expect(
       // @ts-expect-error illegal usage
@@ -107,7 +110,7 @@ describe('wrapRpc(workerThread)', () => {
       addListener: onMessage,
       removeListener: offMessage,
       postMessage
-    })
+    } as unknown as WorkerThread)
 
     expect(await rpc.getField('name')).toEqual(remoteCallReturn)
   })

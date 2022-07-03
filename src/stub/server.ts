@@ -9,7 +9,8 @@ import {
   RpcMessage,
   RpcMessageType
 } from '../protocol'
-import { registerMessageListener, sendRpcMessage } from './adapter'
+import { enhanceConnection } from '@/adapter'
+import { AdaptorEvent } from '@/adapter/interface'
 
 export function createRpcNormalResult<Result>(
   id: MessageId,
@@ -29,44 +30,42 @@ export function exposeRpc<
   Value extends Record<string, unknown>,
   Endpoint extends RpcEndpoint
 >(value: Value, endpoint: Endpoint) {
-  registerMessageListener(
-    endpoint,
-    async function onmessage(message: RpcMessage = {} as RpcMessage) {
-      const { id, path = [], type } = message
-      if (isNil(id)) {
-        return
-      }
+  const conn = enhanceConnection(endpoint)
+  conn.on(
+    AdaptorEvent.MESSAGE,
+    async function onmessage(
+      this: typeof conn,
+      message: RpcMessage = {} as RpcMessage
+    ) {
+      if (isNil(message?.id)) return
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const current = get(value, path),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        parent = get(value, path.slice(0, -1), value)
+      const target = get(value, message.path) as unknown
       try {
-        switch (type) {
+        switch (message.type) {
           case RpcMessageType.GET:
-            return sendRpcMessage(
-              endpoint,
-              createRpcNormalResult(id, get(value, path))
-            )
+            return this.postMessage(createRpcNormalResult(message.id, target))
           case RpcMessageType.APPLY:
-            if (isFunction(current)) {
-              return sendRpcMessage(
-                endpoint,
-                createRpcNormalResult(
-                  id,
-                  await current.apply(parent, message.args)
+            if (!isFunction(target)) {
+              throw new Error(`${message.path?.join('.')} is NOT callable.`)
+            }
+            return this.postMessage(
+              createRpcNormalResult(
+                message.id,
+                await target.apply(
+                  get(value, message.path?.slice(0, -1), value),
+                  message.args
                 )
               )
-            }
-            throw new Error(
-              `<REMOTE>.${path.join('.')} isn't a callable function.`
             )
           default:
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            throw new Error(`Unknown message type ${type}`)
+            throw new Error(
+              // code defenses
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              `Unknown action type: ${(message as any).type as string}`
+            )
         }
       } catch (error) {
-        sendRpcMessage(endpoint, createRpcExceptionResponse(id, error as Error))
+        this.postMessage(createRpcExceptionResponse(message.id, error as Error))
       }
     }
   )
