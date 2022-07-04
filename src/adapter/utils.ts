@@ -45,15 +45,21 @@ export function createRequest<
 export function checkIsBrowserCompatEndpoint(
   endpoint: unknown
 ): endpoint is BrowserEndpoint {
-  return ['addEventListener', 'removeEventListener', 'postMessage'].every(m =>
-    isFunction(get(endpoint, m))
+  return (
+    typeof window !== 'undefined' &&
+    ['addEventListener', 'removeEventListener', 'postMessage'].every(m =>
+      isFunction(get(endpoint, m))
+    )
   )
 }
 
 export function checkIsNodeCompatEndpoint(
   endpoint: unknown
 ): endpoint is NodeEndpoint {
-  return ['addListener', 'removeListener', 'postMessage'].every(m =>
-    isFunction(get(endpoint, m))
+  return (
+    typeof process !== 'undefined' &&
+    ['addListener', 'removeListener', 'postMessage'].every(m =>
+      isFunction(get(endpoint, m))
+    )
   )
 }

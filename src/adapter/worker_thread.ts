@@ -1,13 +1,14 @@
-import { Worker } from 'worker_threads'
 import isNil from 'lodash/isNil'
 import { AdaptorEvent, ConnectionHandler, UniversalAdaptor } from './interface'
-import { InferTransferable } from '@/protocol'
+import { InferTransferable, NodeEndpoint } from '@/protocol'
 import { UniversalFn } from '@/stub/stub'
 
-export class WorkerThreadAdaptor implements UniversalAdaptor<Worker> {
+export class WorkerThreadAdaptor<Thread extends NodeEndpoint>
+  implements UniversalAdaptor<Thread>
+{
   private listeners = new Map<string, WeakMap<UniversalFn, UniversalFn<this>>>()
 
-  constructor(public client: Worker) {}
+  constructor(public client: Thread) {}
 
   on<Data = unknown>(
     event: AdaptorEvent.MESSAGE,
@@ -37,7 +38,7 @@ export class WorkerThreadAdaptor implements UniversalAdaptor<Worker> {
 
   postMessage<Data>(
     data: Data,
-    transferable?: InferTransferable<Worker>
+    transferable?: InferTransferable<Thread>
   ): void {
     this.client.postMessage(data, transferable)
   }
