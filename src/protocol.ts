@@ -71,5 +71,5 @@ export type InferTransferable<Endpoint> = Endpoint extends
   | WorkerMessagePort // worker message port like
   ? ReadonlyArray<TransferListItem>
   : Endpoint extends Worker | MessagePort // browser like
-  ? Transferable
+  ? Transferable[]
   : never // eg. child_process

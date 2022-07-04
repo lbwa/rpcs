@@ -17,6 +17,10 @@ export type ConnectionHandler<Callee, ResponseData> =
   | ConnectionRequestHandler<Callee>
   | ConnectionResponseHandler<Callee, ResponseData>
 
+/**
+ * As a client/server adaptor for redirecting API calling. We should not
+ * include any exclusive logics in adaptor layer;
+ */
 export interface UniversalAdaptor<Client> {
   client: Client
   on<Fn extends ConnectionHandler<this, Response>, Response = unknown>(

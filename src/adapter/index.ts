@@ -6,6 +6,7 @@ import {
   checkIsBrowserCompatEndpoint,
   checkIsNodeCompatEndpoint
 } from './utils'
+import { BrowserAdaptor } from './browser'
 import { RpcEndpoint } from '@/protocol'
 
 export function enhanceConnection(
@@ -16,7 +17,7 @@ export function enhanceConnection(
   }
 
   if (checkIsBrowserCompatEndpoint(endpoint)) {
-    // TODO: browser compat adaptor
+    return new BrowserAdaptor(endpoint)
   }
 
   return new UnknownAdaptor(endpoint)
