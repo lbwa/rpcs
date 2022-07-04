@@ -1,6 +1,6 @@
 {
   "name": "rpcs",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "Convenient Node.js RPC interfaces",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

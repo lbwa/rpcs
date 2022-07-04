@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0](https://github.com/lbwa/rpcs/compare/v0.2.1...v1.0.0) (2022-07-04)
+
+### Features
+
+- create BrowserAdaptor to support browser platform ([972e206](https://github.com/lbwa/rpcs/commit/972e20602873d7fed602b15511afccab090be16b))
+- createRequest as common request layer ([1ab33bc](https://github.com/lbwa/rpcs/commit/1ab33bceae907a42748a2979407301ccde2b98ce))
+- rename connectPipe & exposePipe ([6274579](https://github.com/lbwa/rpcs/commit/62745792e58a1f40812b5f8eaddefc64e252c3a3))
+- UnknownAdatpor as fallback ([826280d](https://github.com/lbwa/rpcs/commit/826280d2fd26b96bccf87dba0786d70afa71da60))
+
+### Bug Fixes
+
+- only make connectPipe & exposePipe public ([1d75749](https://github.com/lbwa/rpcs/commit/1d75749b1c9654e6e1757b2fba7a4d2d26382d10))
+
 ### [0.2.1](https://github.com/lbwa/rpcs/compare/v0.2.0...v0.2.1) (2022-03-30)
 
 ### Bug Fixes
