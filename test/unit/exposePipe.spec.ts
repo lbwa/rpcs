@@ -20,51 +20,60 @@ describe('exposeRpc(value, endpoint)', () => {
     expect(postMessage).not.toBeCalled()
   })
 
-  it('should return remote property value', async () => {
-    const ee = new EventEmitter() as WorkerThread
-    const postMessage = jest.fn()
-    Object.assign(ee, {
-      postMessage
-    })
-    const data = { person: { name: 'person name' } }
-    exposePipe(data, ee)
+  class People {
+    person = { name: 'person name ' }
+    isClass = true
+  }
 
-    {
-      ee.emit('message', {
-        id: 12,
-        path: ['person', 'name']
-      })
-      expect(postMessage).toBeCalledTimes(1)
-      const [response] = (postMessage.mock.calls[0] ?? []) as [
-        RpcExceptionResponse<Error>
-      ]
-      expect(response.id).toEqual(12)
-      expect(
-        (response as unknown as RpcNormalResponse<unknown>).result
-      ).toBeUndefined()
-      expect(response.error.message).toMatchSnapshot(
-        'expect unknown message type'
-      )
-      postMessage.mockReset()
-    }
+  const people = { person: { name: 'person name' } }
 
-    {
-      ee.emit('message', {
-        id: 123,
-        path: ['person', 'name'],
-        type: RpcMessageType.GET
+  it.each([people, new People()])(
+    'should return remote property value with data: %o',
+    async data => {
+      const ee = new EventEmitter() as WorkerThread
+      const postMessage = jest.fn()
+      Object.assign(ee, {
+        postMessage
       })
-      expect(postMessage).toBeCalledTimes(1)
-      const [response] = (postMessage.mock.calls[0] ?? []) as [
-        RpcNormalResponse<string>
-      ]
-      expect(response.id).toEqual(123)
-      expect(
-        (response as unknown as RpcExceptionResponse).error
-      ).toBeUndefined()
-      expect(response.result).toEqual(data.person.name)
+      exposePipe(data, ee)
+
+      {
+        ee.emit('message', {
+          id: 12,
+          path: ['person', 'name']
+        })
+        expect(postMessage).toBeCalledTimes(1)
+        const [response] = (postMessage.mock.calls[0] ?? []) as [
+          RpcExceptionResponse<Error>
+        ]
+        expect(response.id).toEqual(12)
+        expect(
+          (response as unknown as RpcNormalResponse<unknown>).result
+        ).toBeUndefined()
+        expect(response.error.message).toMatchSnapshot(
+          `expect unknown message type with ${JSON.stringify(data)}`
+        )
+        postMessage.mockReset()
+      }
+
+      {
+        ee.emit('message', {
+          id: 123,
+          path: ['person', 'name'],
+          type: RpcMessageType.GET
+        })
+        expect(postMessage).toBeCalledTimes(1)
+        const [response] = (postMessage.mock.calls[0] ?? []) as [
+          RpcNormalResponse<string>
+        ]
+        expect(response.id).toEqual(123)
+        expect(
+          (response as unknown as RpcExceptionResponse).error
+        ).toBeUndefined()
+        expect(response.result).toEqual(data.person.name)
+      }
     }
-  })
+  )
 
   it('should response remote method call', async () => {
     const ee = new EventEmitter() as WorkerThread

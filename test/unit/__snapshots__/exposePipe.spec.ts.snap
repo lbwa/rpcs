@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`exposeRpc(value, endpoint) should return remote property value: expect unknown message type 1`] = `"Unknown action type: undefined"`;
+exports[`exposeRpc(value, endpoint) should return remote property value with data: { person: { name: 'person name' } }: expect unknown message type with {"person":{"name":"person name"}} 1`] = `"Unknown action type: undefined"`;
+
+exports[`exposeRpc(value, endpoint) should return remote property value with data: People { person: { name: 'person name ' }, isClass: true }: expect unknown message type with {"person":{"name":"person name "},"isClass":true} 1`] = `"Unknown action type: undefined"`;

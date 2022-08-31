@@ -27,7 +27,7 @@ function createRpcExceptionResponse<Exception>(
 }
 
 export function exposePipe<
-  Value extends Record<string, unknown>,
+  Value extends Record<string, any>,
   Endpoint extends RpcEndpoint
 >(value: Value, endpoint: Endpoint) {
   const conn = enhanceConnection(endpoint)
