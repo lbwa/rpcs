@@ -1,5 +1,11 @@
 # Changelog
 
+### [1.0.1](https://github.com/lbwa/rpcs/compare/v1.0.0...v1.0.1) (2022-08-31)
+
+### Bug Fixes
+
+- exposePipe generic constraints should be Record<string, any> ([85756d8](https://github.com/lbwa/rpcs/commit/85756d8da62bdc44a0d0e933d25d4e2a515d351e))
+
 ## [1.0.0](https://github.com/lbwa/rpcs/compare/v0.2.1...v1.0.0) (2022-07-04)
 
 ### Features
